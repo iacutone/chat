@@ -1,5 +1,5 @@
 defmodule Chat.IntegrationTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   import ExUnit.CaptureLog
 
   alias Chat.Message.Broadcast

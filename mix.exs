@@ -15,15 +15,20 @@ defmodule Chat.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Chat.Application, []}
+      mod: application_mod()
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-    ]
+    [{:thousand_island, "~> 0.6.4"}]
+  end
+
+  defp application_mod do
+    if System.get_env("THOUSAND_ISLAND") do
+      {Chat.ThousandIsland.Application, []}
+    else
+      {Chat.Application, []}
+    end
   end
 end

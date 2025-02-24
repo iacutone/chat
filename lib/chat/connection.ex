@@ -29,13 +29,13 @@ defmodule Chat.Connection do
     {:noreply, state}
   end
 
-  defp handle_message(%Register{username: username}, %__MODULE__{username: nil} = state) do
+  def handle_message(%Register{username: username}, %__MODULE__{username: nil} = state) do
     {:ok, _} = Registry.register(BroadcastRegistry, :broadcast, :novalue)
     {:ok, _} = Registry.register(UsernameRegistry, username, :novalue)
     {:ok, put_in(state.username, username)}
   end
 
-  defp handle_message(%Broadcast{} = message, state) do
+  def handle_message(%Broadcast{} = message, state) do
     sender = self()
     message = %Broadcast{message | from_username: state.username}
 
@@ -50,13 +50,8 @@ defmodule Chat.Connection do
     {:ok, state}
   end
 
-  defp handle_message(%Register{}, _) do
+  def handle_message(%Register{}, _) do
     Logger.error("Invalid Register message, had already recceived one")
-    :error
-  end
-
-  defp handle_message(%Broadcast{}, _) do
-    Logger.error("Invalid Broadcast message, had not received a Register")
     :error
   end
 
