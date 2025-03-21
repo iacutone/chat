@@ -20,12 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-chat-*.tar
+redis_client-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
-
-dump.rdb
-
-.DS_Store
-apps/.DS_Store
