@@ -1,4 +1,4 @@
-defmodule Chat.Connection do
+defmodule Chatty.Connection do
   use GenServer, restart: :temporary
 
   require Logger

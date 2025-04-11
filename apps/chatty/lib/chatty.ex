@@ -1,4 +1,4 @@
-defmodule Chat do
+defmodule Chatty do
   @moduledoc """
   Documentation for `Chat`.
   """

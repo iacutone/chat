@@ -1,4 +1,4 @@
-defmodule Chat.Acceptor do
+defmodule Chatty.Acceptor do
   use GenServer
 
   require Logger

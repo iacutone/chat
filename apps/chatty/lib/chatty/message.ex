@@ -1,4 +1,4 @@
-defmodule Chat.Message do
+defmodule Chatty.Message do
   defmodule Register do
     defstruct [:username]
   end

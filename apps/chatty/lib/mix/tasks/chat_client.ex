@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.ChatClient do
   use Mix.Task
-  import Chat.Protocol
-  alias Chat.Message.{Broadcast, Register}
+  import Chatty.Protocol
+  alias Chatty.Message.{Broadcast, Register}
 
   def run([] = _) do
     {:ok, socket} = :gen_tcp.connect(~c"localhost", 4000, [:binary, active: :once])

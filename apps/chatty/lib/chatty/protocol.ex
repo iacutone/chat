@@ -1,4 +1,4 @@
-defmodule Chat.Protocol do
+defmodule Chatty.Protocol do
   alias Chat.Message.Broadcast
   alias Chat.Message.Register
 
