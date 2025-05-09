@@ -21,7 +21,11 @@ defmodule Chatty.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [{:thousand_island, "~> 0.6.4"}]
+    [
+      {:nimble_pool, "~> 1.0"},
+      {:poolboy, "~> 1.5"},
+      {:thousand_island, "~> 0.6.4"}
+    ]
   end
 
   defp application_mod do
