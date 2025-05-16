@@ -1,6 +1,6 @@
 defmodule Chatty.Protocol do
-  alias Chat.Message.Broadcast
-  alias Chat.Message.Register
+  alias Chatty.Message.Broadcast
+  alias Chatty.Message.Register
 
   def decode_message(<<0x01, rest::binary>>) do
     decode_register(rest)

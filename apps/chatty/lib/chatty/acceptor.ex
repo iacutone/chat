@@ -17,12 +17,15 @@ defmodule Chatty.Acceptor do
       active: :once,
       exit_on_close: false,
       reuseaddr: true,
-      backlog: 25
+      backlog: 25,
+      cacertfile: Application.app_dir(:chatty, "priv/ca.pem"),
+      certfile: Application.app_dir(:chatty, "priv/server.crt"),
+      keyfile: Application.app_dir(:chatty, "priv/server.key")
     ]
 
     {:ok, sup} = DynamicSupervisor.start_link(max_children: 20)
 
-    case :gen_tcp.listen(port, listen_options) do
+    case :ssl.listen(port, listen_options) do
       {:ok, listen_socket} ->
         Logger.info("Started chat server on port #{port}")
         send(self(), :accept)
@@ -34,11 +37,11 @@ defmodule Chatty.Acceptor do
   end
 
   def handle_info(:accept, state) do
-    case :gen_tcp.accept(state.listen_socket, 2_000) do
+    case :ssl.transport_accept(state.listen_socket, 2_000) do
       {:ok, socket} ->
-        {:ok, pid} = DynamicSupervisor.start_child(state.supervisor, {Chat.Connection, socket})
+        {:ok, pid} = DynamicSupervisor.start_child(state.supervisor, {Chatty.Connection, socket})
 
-        :ok = :gen_tcp.controlling_process(socket, pid)
+        :ok = :ssl.controlling_process(socket, pid)
 
         send(self(), :accept)
         {:noreply, state}

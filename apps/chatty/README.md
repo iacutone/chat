@@ -1,4 +1,4 @@
-# Chat
+# Chatty
 
 **TODO: Add description**
 

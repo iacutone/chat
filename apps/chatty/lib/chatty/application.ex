@@ -10,12 +10,12 @@ defmodule Chatty.Application do
     children = [
       {Registry, keys: :duplicate, name: BroadcastRegistry},
       {Registry, keys: :unique, name: UsernameRegistry},
-      {Chat.Acceptor, [port: 4000]}
+      {Chatty.Acceptor, [port: 4000]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Chat.Supervisor]
+    opts = [strategy: :one_for_one, name: Chatty.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

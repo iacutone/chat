@@ -1,14 +1,26 @@
 defmodule Mix.Tasks.ChatClient do
   use Mix.Task
+
   import Chatty.Protocol
+
   alias Chatty.Message.{Broadcast, Register}
 
   def run([] = _) do
-    {:ok, socket} = :gen_tcp.connect(~c"localhost", 4000, [:binary, active: :once])
+    {:ok, socket} =
+      :ssl.connect(
+        ~c"localhost",
+        4000,
+        mode: :binary,
+        active: :once,
+        verify: :verify_peer,
+        cacertfile: Application.app_dir(:chatty, "priv/ca.pem"),
+        certfile: Application.app_dir(:chatty, "priv/client.crt"),
+        keyfile: Application.app_dir(:chatty, "priv/client.key")
+      )
 
     user = Mix.shell().prompt("Enter your username: ") |> String.trim()
 
-    :ok = :gen_tcp.send(socket, encode_message(%Register{username: user}))
+    :ok = :ssl.send(socket, encode_message(%Register{username: user}))
 
     receive_loop(user, socket, spawn_user_task(user))
   end
@@ -21,21 +33,21 @@ defmodule Mix.Tasks.ChatClient do
     receive do
       {^ref, message} ->
         broadcast = %Broadcast{from_username: user, contents: message}
-        :ok = :gen_tcp.send(socket, encode_message(broadcast))
+        :ok = :ssl.send(socket, encode_message(broadcast))
         receive_loop(user, socket, spawn_user_task(user))
 
       {:DOWN, ^ref, _, _, _} ->
         Mix.raise("Prompt task died")
 
-      {:tcp, ^socket, data} ->
-        :ok = :inet.setopts(socket, active: :once)
+      {:ssl, ^socket, data} ->
+        :ok = :ssl.setopts(socket, active: :once)
         handle_data(data)
         receive_loop(user, socket, prompt_task)
 
-      {:tcp_closed, ^socket} ->
+      {:ssl_closed, ^socket} ->
         IO.puts("Connection closed")
 
-      {:tcp_error, ^socket, reason} ->
+      {:ssl_error, ^socket, reason} ->
         Mix.raise("TCP error: #{inspect(reason)}")
     end
   end

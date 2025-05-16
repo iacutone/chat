@@ -1,11 +1,11 @@
-defmodule Chat.ThousandIsland.Handler do
+defmodule Chatty.ThousandIsland.Handler do
   use ThousandIsland.Handler
 
   require Logger
 
-  alias Chat.Connection
-  alias Chat.Protocol
-  alias Chat.Message.Broadcast
+  alias Chatty.Connection
+  alias Chatty.Protocol
+  alias Chatty.Message.Broadcast
 
   defstruct [:username, buffer: <<>>]
 

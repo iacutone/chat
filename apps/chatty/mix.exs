@@ -30,9 +30,9 @@ defmodule Chatty.MixProject do
 
   defp application_mod do
     if System.get_env("THOUSAND_ISLAND") do
-      {Chat.ThousandIsland.Application, []}
+      {Chatty.ThousandIsland.Application, []}
     else
-      {Chat.Application, []}
+      {Chatty.Application, []}
     end
   end
 end

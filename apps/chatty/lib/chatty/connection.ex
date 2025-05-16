@@ -3,9 +3,9 @@ defmodule Chatty.Connection do
 
   require Logger
 
-  alias Chat.Message.Broadcast
-  alias Chat.Message.Register
-  alias Chat.Protocol
+  alias Chatty.Message.Broadcast
+  alias Chatty.Message.Register
+  alias Chatty.Protocol
 
   defstruct [:socket, :username, buffer: <<>>]
 
@@ -14,18 +14,25 @@ defmodule Chatty.Connection do
   end
 
   def init(socket) do
-    {:ok, %__MODULE__{socket: socket}}
+    case :ssl.handshake(socket) do
+      {:ok, socket} ->
+        {:ok, %__MODULE__{socket: socket}}
+
+      _ ->
+        Logger.error("SSL handshake failed")
+        {:stop, :normal}
+    end
   end
 
-  def handle_info({:tcp, socket, data}, %__MODULE__{socket: socket} = state) do
+  def handle_info({:ssl, socket, data}, %__MODULE__{socket: socket} = state) do
     state = update_in(state.buffer, &(&1 <> data))
-    :ok = :inet.setopts(socket, active: :once)
+    :ok = :ssl.setopts(socket, active: :once)
     handle_new_data(state)
   end
 
   def handle_info({:broadcast, message}, state) do
     encoded_message = Protocol.encode_message(message)
-    :ok = :gen_tcp.send(state.socket, encoded_message)
+    :ok = :ssl.send(state.socket, encoded_message)
     {:noreply, state}
   end
 
